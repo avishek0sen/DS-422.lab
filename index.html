@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Air Quality Prediction Using Machine Learning | DS422</title>
+<meta name="description" content="DS422 Machine Learning I project: predicting carbon monoxide CO(GT) on the UCI Air Quality dataset with four scikit-learn regression models. Best model: Random Forest.">
+<meta property="og:title" content="Air Quality Prediction Using Machine Learning"><meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css"></head><body>
+<nav aria-label="Primary"><div class="w">
+<a class="logo" href="#top"><svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M6 24C6 12 14 6 26 6c0 12-6 20-18 20" stroke="url(#lg)" stroke-width="2" stroke-linejoin="round"/><path d="M6 26 18 14" stroke="url(#lg)" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="#22d3ee"/><circle cx="21" cy="19" r="2" fill="#10b981"/><path d="M12 12l9 7" stroke="#22d3ee" stroke-width="1" opacity=".7"/><defs><linearGradient id="lg" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#10b981"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs></svg>AIR QUALITY AI</a>
+<div class="links" id="links"><a href="#overview">Overview</a><a href="#dataset">Dataset</a><a href="#analysis">Analysis</a><a href="#methodology">Methodology</a><a href="#models">Models</a><a href="#results">Results</a><a href="#conclusion">Conclusion</a></div>
+<button class="ic" id="theme" aria-label="Toggle dark and light theme"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/></svg></button>
+<a class="btn p cta" href="#overview">Explore Project</a>
+<button class="ic" id="burger" aria-label="Open menu" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+</div></nav>
+<main id="top">
+<header id="hero"><canvas id="cv" aria-hidden="true"></canvas><div class="w">
+<div class="kick">DS422 | MACHINE LEARNING I | 2026</div>
+<h1>Understanding Air Quality Through <span class="gr">Machine Learning.</span></h1>
+<p class="lead" style="font-size:1.1rem">An intelligent data-driven approach to predicting carbon monoxide concentration through environmental measurements and advanced regression algorithms.</p>
+<div class="pills"><span>Supervised Machine Learning</span><span>Regression Analysis</span><span>Environmental Data Science</span></div>
+<div class="ctas"><a class="btn p" href="#overview">Explore Research</a><a class="btn" href="#results">View Model Results</a></div>
+</div></header>
+
+<section id="overview"><div class="w"><span class="tag">Project overview</span><h2>Turning Environmental Data Into Insights</h2>
+<p class="lead">This project studies hourly air-quality sensor readings and asks whether carbon monoxide concentration can be predicted from the other pollutant, sensor and weather measurements recorded alongside it.</p>
+<div class="grid g3">
+<div class="card"><div class="cat">Research problem</div><h3>What drives CO levels?</h3><p class="d">Understanding and predicting carbon monoxide concentration using historical environmental measurements.</p></div>
+<div class="card"><div class="cat">Research approach</div><h3>From raw sensors to models</h3><p class="d">Data preprocessing, exploratory data analysis, feature engineering, supervised machine learning and regression evaluation.</p></div>
+<div class="card"><div class="cat">Research goal</div><h3>Find the best regressor</h3><p class="d">Compare multiple regression algorithms and identify the best-performing model using appropriate evaluation metrics.</p></div></div>
+<div class="ppl" aria-label="Project workflow"><div>Dataset<small>load CSV</small></div><div>EDA<small>explore</small></div><div>Preprocessing<small>clean &amp; engineer</small></div><div>Model Training<small>4 pipelines</small></div><div>Evaluation<small>MAE, RMSE, R²</small></div><div>Prediction<small>test set</small></div></div>
+</div></section>
+
+<section id="dataset" class="alt"><div class="w"><span class="tag">Dataset</span><h2>Inside the Dataset</h2>
+<p class="lead">The UCI Air Quality dataset holds hourly responses of a gas multisensor device deployed in an Italian city, alongside reference analyzer readings for CO, benzene, NOx and NO2, plus temperature and humidity.</p>
+<div class="grid g2">
+<div><h3 style="font-size:1rem;margin-bottom:12px">Original UCI metadata</h3><div class="kv" style="margin-top:0"><div class="card"><b>9,358</b><span>original instances</span></div><div class="card"><b>15</b><span>original features</span></div><div class="card"><b>Mar 2004 – Feb 2005</b><span>measurement period</span></div></div><p class="lead" style="font-size:.9rem">Multivariate time-series dataset. Target variable: CO(GT).</p></div>
+<div><h3 style="font-size:1rem;margin-bottom:12px">Actual shapes in the notebook (executed output)</h3><div class="kv" style="margin-top:0"><div class="card"><b id="n1">9471 × 15</b><span>loaded CSV after dropping all-empty columns</span></div><div class="card"><b id="n2">7,674 × 15</b><span>cleaned data (14 features + CO(GT))</span></div><div class="card"><b>6,139 / 1,535</b><span>train / test rows</span></div></div></div></div>
+<p class="warn">The notebook's CSV loads 9,471 rows, of which 9,357 are non-null. The remaining 114 are empty rows (the "114 missing" shown for every column, including Date). After replacing -200 with NaN and dropping rows with no CO(GT) or no valid DateTime, 7,674 rows remain.</p>
+<div class="card" style="margin-top:28px;padding:8px 24px"><details open><summary style="padding:14px 0">Feature descriptions (15 original columns)</summary><div class="sc"><table><thead><tr><th>Feature</th><th>Description</th><th>Role in notebook</th></tr></thead><tbody id="ft"></tbody></table></div></details></div>
+<div style="margin-top:24px"><a class="btn p" href="https://archive.ics.uci.edu/dataset/387/air+quality" target="_blank" rel="noopener">Open the official UCI dataset</a></div>
+</div></section>
+
+<section id="analysis"><div class="w"><span class="tag">Exploratory data analysis</span><h2>Discovering Patterns in Air Quality</h2>
+<p class="lead">These are the original figures exported from the executed notebook, shown unaltered on a light plate so their colors stay faithful in both themes.</p>
+<div class="grid g2">
+<figure class="card fig"><h3>Carbon Monoxide Distribution</h3><div class="plate"><img src="assets/images/co-distribution.jpg" alt="Histogram of CO concentration, x-axis CO Concentration, y-axis Frequency, right-skewed" loading="lazy"></div><p>Histogram with density curve; x: CO concentration, y: frequency. The distribution is right-skewed, with most readings low and a long tail of high values.</p></figure>
+<figure class="card fig"><h3>Missing Values by Column</h3><div class="plate"><img src="assets/images/missing-values.jpg" alt="Bar chart of missing values per column, NMHC(GT) highest" loading="lazy"></div><p>Bar chart after -200 was converted to NaN; x: columns, y: missing values. NMHC(GT) is missing far more than any other column.</p></figure>
+<figure class="card fig"><h3>Correlation Heatmap</h3><div class="plate"><img src="assets/images/correlation-heatmap.jpg" alt="Correlation heatmap of numeric features" loading="lazy"></div><p>Pearson correlations across numeric columns (computed before NMHC(GT) was dropped). Red indicates strong positive, blue negative correlation.</p></figure>
+<figure class="card fig"><h3>Feature Distribution Histograms</h3><div class="plate"><img src="assets/images/feature-histograms.jpg" alt="Grid of histograms for all numeric features" loading="lazy"></div><p>30-bin histograms per feature; x: feature value, y: frequency. Shapes differ widely: pollutant concentrations skew right, while T, RH and AH are broader.</p></figure>
+</div>
+<h3 style="margin-top:48px;font-size:1.3rem">What the notebook shows</h3>
+<div class="grid g3">
+<div class="card"><h3>CO is right-skewed</h3><p class="d">Most CO(GT) readings sit roughly between 0 and 4, with a long tail reaching about 12.</p></div>
+<div class="card"><h3>NMHC(GT) is mostly missing</h3><p class="d">Its missing count (roughly 8,500 on the chart) dwarfs all others, which is consistent with dropping it before modelling. CO(GT), NOx(GT) and NO2(GT) each show roughly 1,700–1,800 missing.</p></div>
+<div class="card"><h3>Pollutants move together</h3><p class="d">CO(GT) correlates strongly with C6H6(GT) (0.93), PT08.S2(NMHC) (0.92), NMHC(GT) (0.89), PT08.S1(CO) (0.88), PT08.S5(O3) (0.85) and NOx(GT) (0.80); PT08.S3(NOx) is negative (-0.70).</p></div>
+<div class="card"><h3>Weather is weakly linked</h3><p class="d">T (0.02), RH (0.05) and AH (0.05) show almost no linear correlation with CO(GT).</p></div>
+<div class="card"><h3>Strong multicollinearity</h3><p class="d">C6H6(GT) and PT08.S2(NMHC) correlate at 0.98, so several predictors carry overlapping information.</p></div></div>
+</div></section>
+
+<section id="methodology" class="alt"><div class="w"><span class="tag">Data preprocessing</span><h2>Preparing Data for Intelligence</h2>
+<p class="lead">Eleven steps, reproduced in the order they happen in the notebook. Select a step to see the code detail. Step 9 is a random split, not a chronological time-series split.</p>
+<div class="tl" id="tl"></div>
+<p class="warn">Order note: the -200 → NaN replacement runs inside the EDA cell on the main DataFrame, before the cleaned copy is made. The Unnamed columns were already removed when all-empty columns were dropped at load; the later drop uses errors="ignore".</p>
+</div></section>
+
+<section id="models"><div class="w"><span class="tag">Machine learning models</span><h2>Four Algorithms. One Prediction Goal.</h2>
+<div class="grid g2">
+<div class="card"><div class="cat">Model 1 · Linear model</div><h3>Linear Regression</h3><p class="d">Models the target as a weighted sum of the input features, fitting the weights that minimise squared error. It assumes a linear relationship between predictors and CO(GT).</p><p class="d" style="margin-top:8px"><b>Principle:</b> least squares fit of one coefficient per feature.</p><div class="mm">ŷ = β₀ + β₁x₁ + β₂x₂ + … + βₙxₙ</div></div>
+<div class="card"><div class="cat">Model 2 · Tree-based</div><h3>Decision Tree Regressor</h3><p class="d">Repeatedly splits the data with threshold questions on features, then predicts the average target value of the samples in each leaf. random_state=42.</p><p class="d" style="margin-top:8px"><b>Principle:</b> choose splits that reduce variance in the target.</p><div class="mm">if PT08.S2 ≤ t → left branch, else right → leaf mean</div></div>
+<div class="card"><div class="cat">Model 3 · Ensemble (bagging)</div><h3>Random Forest Regressor</h3><p class="d">Trains many decision trees on different bootstrap samples and averages their predictions, which stabilises the high variance of a single tree. n_estimators=100, random_state=42, n_jobs=-1.</p><p class="d" style="margin-top:8px"><b>Principle:</b> average of independent trees.</p><div class="mm">ŷ = (1/T) Σ treeₜ(x), T = 100</div></div>
+<div class="card"><div class="cat">Model 4 · Ensemble (boosting)</div><h3>Gradient Boosting Regressor</h3><p class="d">Builds trees one after another, each fitted to the errors left by the ensemble so far. Default scikit-learn settings with random_state=42.</p><p class="d" style="margin-top:8px"><b>Principle:</b> sequential correction of residual errors.</p><div class="mm">Fₘ(x) = Fₘ₋₁(x) + η · hₘ(x)</div></div></div>
+</div></section>
+
+<section id="results" class="alt"><div class="w"><span class="tag">Training and evaluation</span><h2>Measuring Predictive Performance</h2>
+<div class="grid g2" style="margin-top:32px"><div>
+<p class="lead" style="margin-top:0">Each algorithm sits inside a scikit-learn Pipeline: median imputation, then StandardScaler, then the model. All are trained on the same 80% split and scored on the held-out 20%.</p>
+<ul class="cl"><li>Split: 80% train (6,139 rows) / 20% test (1,535 rows), random_state=42</li><li>Imputer: SimpleImputer(strategy="median")</li><li>Scaler: StandardScaler</li></ul></div>
+<div class="card"><p class="d"><b>MAE</b> (Mean Absolute Error): average absolute prediction error; lower is better.</p><p class="d" style="margin-top:8px"><b>RMSE</b> (Root Mean Squared Error): like MAE but penalises large errors more; lower is better.</p><p class="d" style="margin-top:8px"><b>R²</b> (Coefficient of Determination): share of target variance explained; higher is better.</p></div></div>
+<div class="card" style="margin-top:28px;padding:8px 24px"><div class="sc"><table><thead><tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R² score</th></tr></thead><tbody id="rt"></tbody></table></div></div>
+<div class="grid g3" id="charts"></div>
+
+<h2 style="margin-top:88px">How Accurate Are the Predictions?</h2>
+<p class="lead">Plots below are for the best model (Random Forest), except feature importance, which is by definition a Random Forest output. Figures are exported from the notebook.</p>
+<div class="grid">
+<figure class="card fig"><h3>Actual vs Predicted CO</h3><div class="plate" style="max-width:560px;margin-inline:auto"><img src="assets/images/actual-vs-predicted.jpg" alt="Scatter of actual versus predicted CO for the Random Forest, points hugging the diagonal" loading="lazy"></div><p>Each point is one test sample: actual CO on x, predicted CO on y. A perfect model would put every point on the diagonal y = x (the notebook's plot does not draw that line). Points here cluster tightly along it, with more scatter at higher CO values, where there are fewer samples.</p></figure>
+<figure class="card fig"><h3>Residual Distribution</h3><div class="plate" style="max-width:720px;margin-inline:auto"><img src="assets/images/residual-distribution.jpg" alt="Histogram of residuals centred near zero" loading="lazy"></div><p>Residual = actual − predicted. The distribution peaks near zero and is roughly symmetric, with most errors within about ±1 and a few outliers reaching roughly −2.3 to +2.7. A centred, narrow shape indicates no obvious systematic bias.</p></figure>
+<figure class="card fig"><h3>Random Forest Feature Importance</h3><div class="plate" style="max-width:720px;margin-inline:auto"><img src="assets/images/feature-importance.jpg" alt="Horizontal bar chart of feature importance, PT08.S2(NMHC) largest" loading="lazy"></div><p>PT08.S2(NMHC) dominates at roughly 0.6, followed by C6H6(GT) at about 0.2 and NOx(GT) near 0.08. All other features, including the engineered Hour, Day and Month, contribute little. Values are read from the chart; the notebook did not print them.</p></figure></div>
+</div></section>
+
+<section id="winner"><div class="w"><span class="tag">Best model</span><h2>The Winning Model</h2>
+<p class="lead">Selected exactly as in the notebook: the model with the lowest RMSE on the test set.</p>
+<div class="grid g4">
+<div class="card win mc"><span>Best model (lowest RMSE)</span><b class="gr" style="font-size:1.5rem">Random Forest</b><span>RandomForestRegressor, 100 trees</span></div>
+<div class="card mc"><span>MAE</span><b>0.2247</b></div><div class="card mc"><span>RMSE</span><b>0.3536</b></div><div class="card mc"><span>R² score</span><b>0.9400</b></div></div>
+<div class="card" style="margin-top:20px"><p class="d">Random Forest has the lowest RMSE (0.3536) and MAE (0.2247) and the highest R² of the four models, ahead of Gradient Boosting (RMSE 0.3671). Both ensembles beat the single Decision Tree (RMSE 0.5417) and Linear Regression (RMSE 0.4693). This is consistent with averaging many trees reducing a single tree's variance, and with tree ensembles capturing non-linear structure a linear model cannot. The notebook does not test these causes directly. R² is displayed rounded from 0.939961.</p></div>
+</div></section>
+
+<section id="conclusion" class="alt"><div class="w"><span class="tag">Conclusion</span><h2>What Did We Learn?</h2>
+<div class="grid g2">
+<div class="card"><p class="d">The raw UCI file contained empty rows and sensor gaps coded as -200. Converting these to NaN revealed that NMHC(GT) was mostly missing, so it was removed, and rows lacking CO(GT) or a valid timestamp were dropped, leaving 7,674 rows. Date and Time were combined into a DateTime from which Hour, Day and Month were engineered.</p><p class="d" style="margin-top:12px">Four regression algorithms (Linear Regression, Decision Tree, Random Forest and Gradient Boosting) were trained in identical pipelines with median imputation and standard scaling, and compared with MAE, RMSE and R². Random Forest performed best (MAE 0.2247, RMSE 0.3536, R² ≈ 0.94), with Gradient Boosting a close second. Its feature importances were dominated by PT08.S2(NMHC) and C6H6(GT), in line with their strong correlations with CO(GT).</p></div>
+<div class="card"><h3>Limitations</h3><ul class="cl"><li>The data are historical air-quality measurements from an Italian city.</li><li>Sensor measurements may contain noise and missing values.</li><li>Performance on this dataset does not guarantee performance in other geographical regions.</li><li>The project uses historical data and does not provide live air-quality monitoring.</li><li>The split is random, so neighbouring hours can appear in both train and test sets; results may be optimistic compared with forecasting future data.</li></ul></div></div>
+<p class="lead" style="margin-top:28px">Even a straightforward pipeline can turn noisy sensor streams into accurate pollutant estimates, which suggests machine learning is a practical tool for environmental data analysis, provided its limits are understood.</p>
+</div></section>
+
+<section id="resources" class="res"><div class="w"><span class="tag">Resources</span><h2>Explore the Research</h2>
+<div class="grid g3">
+<a class="card" id="colab" href="#resources" aria-disabled="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="1.8"><path d="M7 4h8l4 4v12H7zM15 4v4h4M10 13h6M10 16h4"/></svg><h3>Google Colab Notebook</h3><p class="d">Full code and outputs. <b>Link pending: replace [INSERT COLAB LINK] in the page source.</b></p></a>
+<a class="card" href="https://archive.ics.uci.edu/dataset/387/air+quality" target="_blank" rel="noopener"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="1.8"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg><h3>Original Dataset</h3><p class="d">UCI Machine Learning Repository: Air Quality.</p></a>
+<a class="card" id="gh" href="#resources" aria-disabled="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="1.8"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="9" r="2"/><path d="M6 8v8M18 11c0 4-6 2-12 5"/></svg><h3>GitHub Repository</h3><p class="d">Project source. <b>Link pending: replace [INSERT GITHUB LINK] in the page source.</b></p></a>
+</div></div></section>
+</main>
+<footer><div class="w"><div><b>Air Quality Prediction Using Machine Learning</b><br>DS422 – Machine Learning I<br>Academic Year 2026</div>
+<div><b>Navigate</b><a href="#overview">Overview</a><a href="#dataset">Dataset</a><a href="#analysis">Analysis</a><a href="#methodology">Methodology</a><a href="#models">Models</a><a href="#results">Results</a><a href="#conclusion">Conclusion</a></div>
+<div><b>Resources</b><a href="https://archive.ics.uci.edu/dataset/387/air+quality" target="_blank" rel="noopener">UCI dataset</a><a href="#resources">Colab notebook</a><a href="#resources">GitHub repository</a></div></div></footer>
+<div id="tip" role="status"></div>
+<script src="js/config.js"></script>
+<script src="js/main.js"></script></body></html>

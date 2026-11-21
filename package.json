@@ -1,0 +1,11 @@
+{
+  "name": "air-quality-ml-website",
+  "version": "1.0.0",
+  "description": "DS422 Machine Learning I: Air Quality Prediction Using Machine Learning (static project website)",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes serve . -l 3000",
+    "dev": "npx --yes serve . -l 3000"
+  },
+  "license": "MIT"
+}
